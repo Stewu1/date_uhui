@@ -729,12 +729,12 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 <!-- Flashbang effect (additive) -->
 <style>
 .flashbang-wrap{position:fixed;inset:0;pointer-events:none;z-index:1000000;overflow:hidden}
-.flashbang-grenade{position:absolute;left:50%;top:120vh;transform:translateX(-50%);width:clamp(120px,16vmin,210px);opacity:0;will-change:top,opacity}
+.flashbang-grenade{position:absolute;left:50%;top:120vh;transform:translateX(-50%);width:clamp(200px,25vmin,350px);opacity:0;will-change:top,opacity}
 .flashbang-grenade.active{animation:flashbangLaunch 300ms cubic-bezier(.2,.9,.35,1) forwards}
 @keyframes flashbangLaunch{
   0%{top:120vh;opacity:0}
   20%{opacity:1}
-  100%{top:32vh;opacity:1}
+  100%{top:50vh;opacity:1}
 }
 .flashbang-whiteout{position:absolute;inset:0;background:#fff;opacity:0}
 .flashbang-whiteout.active{animation:flashbangWhite 1800ms ease-out forwards}
