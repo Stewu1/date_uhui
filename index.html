@@ -896,7 +896,37 @@ window.addEventListener("scroll", function () {
   });
 </script>
 
+<script>
+  let reachedBottom = false;
+  let showing = false;
 
+  window.addEventListener("scroll", function () {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.body.scrollHeight;
+    const maxScroll = docHeight - windowHeight;
+
+    // Detect bottom
+    if (scrollTop >= maxScroll - 5) {
+      reachedBottom = true;
+    }
+
+    const scrollPercent = scrollTop / maxScroll;
+
+    // Trigger when scrolling back up past 50%
+    if (reachedBottom && !showing && scrollPercent <= 0.2) {
+      const surprise = document.getElementById("surprise");
+      surprise.style.display = "block";
+      showing = true;
+
+      setTimeout(() => {
+        surprise.style.display = "none";
+        showing = false;
+        reachedBottom = false; // reset cycle
+      }, 1000);
+    }
+  });
+</script>
 
     
 </body>
