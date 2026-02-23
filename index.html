@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="sv">
+
+<script>
+(function() {
+    const logoURL = "date.png";  // <-- CHANGE THIS to your actual logo
+
+    function spawnLogo() {
+        const img = document.createElement("img");
+        img.src = logoURL;
+        img.className = "logo-rain";
+
+        const startX = Math.random() * window.innerWidth;
+        const size = 40 + Math.random() * 60; // varied sizes
+        const duration = 3 + Math.random() * 5; // fall speed
+
+        img.style.left = startX + "px";
+        img.style.width = size + "px";
+        img.style.height = size + "px";
+        img.style.animationDuration = duration + "s";
+        img.style.transform = `rotate(${Math.random()*360}deg)`;
+
+        document.body.appendChild(img);
+
+        // cleanup when done
+        setTimeout(() => img.remove(), duration * 1000);
+    }
+
+    // spawn repeatedly
+    setInterval(spawnLogo, 250); // one logo every 250 ms
+})();
+</script>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.9, user-scalable=no" />
+  <title>DaTe 2.0 — The User‑Repellent Experience™ (Parodi, 67‑Color Flash)</title>
+  <meta name="theme-color" content="#000000">
+  <style>
+  :root{ --acc:#ff00ff; --danger:#ff0044; --ok:#00ffaa; --warn:#ffaa00; }
+  *{box-sizing:border-box}
+  html{scroll-snap-type: y mandatory;}
+  body{margin:0;color:#0a0a0a;background:repeating-linear-gradient(45deg,#000 0 18px,#010101 18px 36px);cursor:progress;overflow-x:hidden}
+
+  /* ===== GLOBAL FLASH OVERLAYS (no JS) =====
+     Keep the original white pulses (html::before) and replace the second overlay
+     with a stepped hue-rotating colour flasher (html::after). Both use
+     mix-blend-mode:difference for dramatic page-wide flashes. */
+  html::before, html::after{content:""; position:fixed; inset:0; pointer-events:none; z-index:1; mix-blend-mode:difference}
+
+  /* White pulse overlay (unchanged) */
+  html::before{ background:#fff; opacity:0; animation: invertPulseA 37s steps(1,end) infinite; }
+  @keyframes invertPulseA{ 0%{opacity:0} 3%{opacity:1} 5%{opacity:0} 11%{opacity:1} 12%{opacity:0} 23%{opacity:1} 24%{opacity:0} 31%{opacity:1} 33%{opacity:0} 47%{opacity:1} 48%{opacity:0} 59%{opacity:1} 60%{opacity:0} 71%{opacity:1} 72%{opacity:0} 86%{opacity:1} 87%{opacity:0} 100%{opacity:0} }
+
+  /* 67-colour flasher overlay: start from magenta and step hue across 360° in 67 discrete steps.
+     Opacity pulses at irregular times, independent from the white pulse. */
+  html::after{
+    background:#ff00ff; /* seed colour */
+    filter:hue-rotate(0deg) saturate(160%);
+    opacity:0;
+    animation:
+      hueSteps 19.6s steps(67,end) infinite,   /* 67 discrete colours */
+      colorPulse 41s steps(1,end) infinite;     /* on/off flashes */
+  }
+  @keyframes hueSteps { to { filter: hue-rotate(360deg) saturate(160%); } }
+  /* Irregular on/off windows to feel random */
+  @keyframes colorPulse {
+    0%{opacity:0} 4%{opacity:1} 7%{opacity:0}
+    13%{opacity:1} 15%{opacity:0}
+    22%{opacity:1} 24%{opacity:0}
+    33%{opacity:1} 34%{opacity:0}
+     Forty%{opacity:1} 41%{opacity:0} /* just a comment: ensure numeric only below */
+    48%{opacity:1} 50%{opacity:0}
+    57%{opacity:1} 58%{opacity:0}
+    66%{opacity:1} 67%{opacity:0}
+    74%{opacity:1} 75%{opacity:0}
+    83%{opacity:1} 84%{opacity:0}
+    92%{opacity:1} 93%{opacity:0}
+    100%{opacity:0}
+  }
+
+  /* Keep site chrome in its layer */
+  .site, .banner,.subbanner,.rail{ position:relative; z-index:2 }
+
+  /* ===== CONTROLS ===== */
+  .controls{position:fixed; top:46px; right:8px; z-index:999999; display:flex; gap:6px; font: 11px/1.4 system-ui, sans-serif}
+  .controls a{background:#0b0b0b; border:1px solid #222; color:#bbb; text-decoration:none; padding:3px 6px}
+  .controls a:hover{filter:brightness(1.2)}
+  #storm:target ~ .site *{ animation-play-state: running !important; }
+  #calm:target  ~ .site *{ animation-play-state: paused  !important; }
+  #whiteout:target ~ .site{ filter: invert(1) hue-rotate(180deg); }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress{position:fixed; left:0; right:0; top:42px; height:3px; z-index:99998; background:#111}
+  .progress::before{content:""; position:absolute; left:0; top:0; bottom:0; width:30%; background:linear-gradient(90deg,#f0f,#0ff); transform-origin:left; animation:load 8s ease-in-out infinite}
+  @keyframes load{ 0%{transform:scaleX(0)} 50%{transform:scaleX(3)} 100%{transform:scaleX(0)} }
+
+  /* ===== BANNERS ===== */
+  .banner{position:fixed;left:0;right:0;top:0;height:24px;z-index:99999;mix-blend-mode:difference}
+  .banner--flash{background:repeating-linear-gradient(90deg,#000 0 10px,#f0f 10px 20px);animation:hue .8s linear infinite;color:#fff}
+  .banner marquee{font-size:12px;line-height:24px}
+  .subbanner{position:fixed;left:0;right:0;top:24px;height:18px;z-index:9999;background:repeating-linear-gradient(90deg,#111 0 10px,#222 10px 20px);}
+  .subbanner marquee{line-height:18px;color:#bbb;font-size:11px}
+  @keyframes hue{to{filter:hue-rotate(360deg)}}
+
+  /* ===== HEADER ===== */
+  .site-header{position:sticky;top:0;z-index:9998;display:grid;grid-template-columns:140px 1fr 320px;gap:8px;align-items:center;background:rgba(0,0,0,.8);border-bottom:3px double #333;padding:46px 10px 10px;backdrop-filter:blur(3px)}
+  .logo{display:inline-block; animation: spin 3s linear infinite; transform-origin:center center}
+  .logo svg{width:120px;height:120px;transform:rotate(-12deg) scale(1.3)}
+
+  /* ===== GASLIGHT NAV ===== */
+  .nav{position:relative}
+  .nav ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px;transform:translateY(-18px)}
+  .nav li:nth-child(odd){transform:translateY(12px)}
+  .nav li:nth-child(3n){transform:translateY(-8px)}
+  .nav a{display:block;padding:6px 8px;background:rgba(255,0,255,.1);color:#bbb;text-decoration:none;border:1px dashed #444;font-size:12px}
+  .nav a:hover{background:rgba(255,0,255,.11);color:#bbb;}
+  .nav ul > li{transition:none}
+  .nav ul > li:nth-child(odd) a{margin-top:1px}
+  .nav ul > li:nth-child(3n) a{margin-left:1px}
+  .nav ul>li:nth-child(1){order:1}
+  .nav ul>li:nth-child(2){order:2}
+  .nav ul>li:nth-child(3){order:3}
+  .nav ul>li:nth-child(4){order:4}
+  .nav ul>li:nth-child(5){order:5}
+  .nav ul>li:nth-child(6){order:6}
+  .nav ul>li:nth-child(7){order:7}
+  .nav ul>li:nth-child(8){order:8}
+  .nav ul>li:nth-child(9){order:9}
+  .nav ul>li:nth-child(10){order:10}
+  .nav ul>li:nth-child(11){order:11}
+  .nav ul>li:nth-child(12){order:12}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(1){order:2}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(2){order:3}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(3){order:4}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(4){order:5}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(5){order:6}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(6){order:7}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(7){order:8}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(8){order:9}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(9){order:10}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(10){order:11}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(11){order:12}
+  .nav.nav--gaslight:has(li:nth-child(odd):hover) ul>li:nth-child(12){order:1}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(1){order:12}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(2){order:1}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(3){order:2}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(4){order:3}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(5){order:4}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(6){order:5}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(7){order:6}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(8){order:7}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(9){order:8}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(10){order:9}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(11){order:10}
+  .nav.nav--gaslight:has(li:nth-child(even):hover) ul>li:nth-child(12){order:11}
+  .nav.nav--gaslight li:hover > a{ pointer-events:none; }
+
+  /* ===== HERO / mid buttons (no spin) ===== */
+  .hero{position:relative;color:#aaa;background:
+    radial-gradient(circle at 10% 10%,#1a001a,#000),
+    linear-gradient(90deg, rgba(255,0,255,.02) 0 50%, rgba(0,255,255,.02) 50% 100%);
+    padding:60px 20px;text-align:center;animation:jitter .12s infinite alternate}
+  .hero:before{content:"";position:absolute;inset:0;background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), transparent 40%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,0.03), transparent 40%);
+    pointer-events:none}
+  @keyframes jitter{to{transform:translate(1px,-1px) rotate(-.4deg)}}
+  .btn-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:10px 14px;margin:12px 0;border:2px solid var(--acc);color:var(--acc);text-decoration:none;position:relative}
+  .btn--ghost{border-color:#444;color:#777}
+  .btn-join{order:1}.btn-more{order:2}
+  /* NOTE: buttons do not spin */
+
+  .btn[data-tip]:hover::after{content: attr(data-tip);position:absolute; left:50%; transform: translateX(-50%);
+    bottom: calc(100% + 6px); white-space:nowrap; background:#111; color:#bbb; border:1px solid #333; padding:4px 6px; font-size:11px; z-index:5; }
+
+  /* Infinite swap toggles (anchors must be before .site in DOM) */
+  #swapA:target ~ .site .content .hero .set-a,
+  #swapB:target ~ .site .content .hero .set-a { display:none; }
+  .hero .set-a{ display:flex; }
+  #swapA:target ~ .site .content .hero .btn-join{order:2}
+  #swapA:target ~ .site .content .hero .btn-more{order:1}
+  #swapA:target ~ .site .content .hero .set-b{ display:flex; }
+  #swapA:target ~ .site .content .hero .set-a{ display:none; }
+  #swapB:target ~ .site .content .hero .btn-join{order:1}
+  #swapB:target ~ .site .content .hero .btn-more{order:2}
+  #swapB:target ~ .site .content .hero .set-a{ display:flex; }
+  #swapB:target ~ .site .content .hero .set-b{ display:none; }
+  .hero .set-b{ display:none; }
+
+  /* ===== TOASTS (odd spin faster) ===== */
+  .toasts{position:fixed;right:10px;top:60px;width:260px;z-index:99997;pointer-events:none}
+  .toasts .toast{background:#0b0b0b;border:1px solid #222;color:#ccc;padding:8px 10px;margin:6px 0;box-shadow:0 0 0 2px rgba(255,0,255,.1)}
+  .toasts .toast:nth-child(odd){ animation: slide 3.2s ease-in-out infinite, spinR 3s linear infinite }
+  .toast.ok{border-left:4px solid var(--ok)}
+  .toast.warn{border-left:4px solid var(--warn)}
+  .toast.err{border-left:4px solid var(--danger)}
+  .toast:nth-child(2){animation-delay:.6s}
+  .toast:nth-child(3){animation-delay:1.2s}
+  .toast:nth-child(4){animation-delay:1.8s}
+  .toast:nth-child(5){animation-delay:2.4s}
+  @keyframes slide{0%{transform:translateX(120%); opacity:0} 10%{transform:translateX(0); opacity:1} 80%{transform:translateX(0); opacity:1} 100%{transform:translateX(120%); opacity:0}}
+
+  /* ===== POP‑UPS (ephemeral) — even ones spin (3s) ===== */
+  .popups{position:fixed;inset:0;z-index:99995;pointer-events:none}
+  .popup{position:absolute;min-width:200px;max-width:300px;background:#0c0c0c;border:1px solid #242;box-shadow:0 0 0 2px rgba(255,0,255,.08);color:#cfc;padding:10px 12px;font-size:12px;opacity:0;transform:scale(.98)}
+  .popup .title{font-weight:bold;color:#9ff;margin:0 0 4px 0;font-size:12px}
+  .popup .text{color:#9aa}
+  @keyframes popflash{0%{opacity:0;transform:scale(.98)}5%{opacity:1;transform:scale(1)}13%{opacity:1}14%{opacity:0;transform:scale(.98)}100%{opacity:0}}
+  .popup{animation: popflash 6s linear infinite}
+  .popup:nth-child(2n){ animation: popflash 6s linear infinite, spinR 3s linear infinite }
+  .popup:nth-child(1){top:100px;left:40px; animation-delay: .1s}
+  .popup:nth-child(2){bottom:120px;right:50px; animation-delay: .9s}
+  .popup:nth-child(3){top:40%;left:64%; animation-delay: 1.7s}
+  .popup:nth-child(4){top:68%;left:18%; animation-delay: 2.5s}
+  .popup:nth-child(5){top:28%;right:12%; animation-delay: 3.3s}
+  .popup:nth-child(6){bottom:10%;left:52%; animation-delay: 4.1s}
+  .popup:nth-child(7){top:160px;right:240px; animation-delay: 4.9s}
+  .popup:nth-child(8){top:65%;right:30%; animation-delay: 5.7s}
+
+  /* ===== PANELS / HEADINGS (subset spins) ===== */
+  .content{padding:20px}
+  section{scroll-snap-align:start}
+  .panel{margin:40px auto;max-width:1100px;border:1px solid #222;padding:20px;background:linear-gradient(180deg,rgba(255,0,255,.05),rgba(0,0,0,.6))}
+  #events.panel > h2, #partners.panel > h2 { display:inline-block; animation: spinR 3s linear infinite }
+
+  /* News */
+  #news .news-columns{columns:3 280px; column-gap:14px; direction: rtl; unicode-bidi: plaintext}
+  #news .news-item{break-inside:avoid; padding:6px; border:1px dashed #333; margin:8px 0; background:#080808; color:#aaa}
+
+  /* Events */
+  #events .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  #events .card:nth-child(odd){ animation: spinR 3s linear infinite }
+
+  /* Modal cascade */
+  .modal{position:fixed; inset:10% 10% auto 10%; background:rgba(0,0,0,.96); border:2px solid #f0f; color:#bbb; padding:16px; display:none; z-index:99990}
+  .modal h3{margin:0 0 8px 0}
+  .modal:target{display:block}
+  .modal .row{display:flex; gap:8px; flex-wrap:wrap}
+
+  /* Membership */
+  #membership .form-wrap{transform:rotate(-.6deg); background:#070707;border:1px solid #222;padding:14px}
+  #membership label{display:block;color:#aaa;margin:10px 0}
+  #membership input{width:100%;padding:8px;background:#0b0b0b;border:1px solid #191919;color:#141414}
+  #membership input:hover{transform:translateX(1px)}
+  .submit-wrap{position:relative;height:48px}
+  .btn--submit{position:absolute;left:50%;transform:translateX(-50%);transition:transform .05s linear;background:#060606;color:#888;border:1px solid #444}
+  .submit-wrap:hover .btn--submit{transform:translateX(-50%) translateX(60px)}
+
+  /* Partners */
+  #partners .logos{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  #partners .logos .logo{height:60px;background:#050505;border:1px solid #222}
+  #partners .logos .logo:nth-child(4n){ animation: spinR 3s linear infinite }
+
+  /* Side rails */
+  .rail{position:fixed;top:60px;bottom:0;width:22px;background:linear-gradient(180deg,rgba(255,0,255,.08),transparent);color:#aaa;font-size:10px;writing-mode:vertical-rl;text-orientation:mixed;z-index:99996}
+  .rail.left{left:0}
+  .rail.right{right:0}
+
+  /* Tooltip helper */
+  [data-tip]{position:relative}
+  [data-tip]:hover::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);bottom:100%;background:#111;color:#bbb;border:1px solid #333;padding:4px 6px;font-size:11px;white-space:nowrap;z-index:1000}
+
+  /* Footer */
+  .site-footer{text-align:center;color:#666;padding:60px 10px;background:linear-gradient(0deg,#000 0 70%,#090909 70% 100%)}
+
+  /* Confetti overlay */
+  .confetti{pointer-events:none;position:fixed;inset:0;z-index:5000;background:
+    radial-gradient(circle at 10% 10%,rgba(255,0,255,.08),transparent 30%),
+    radial-gradient(circle at 80% 20%,rgba(0,255,255,.08),transparent 30%),
+    radial-gradient(circle at 30% 70%,rgba(255,255,0,.06),transparent 30%);
+    animation:confettifade 1.2s infinite alternate}
+  @keyframes confettifade{to{opacity:.2}}
+
+  /* Print sabotage */
+  @media print{
+    body{ filter: invert(1) grayscale(1); }
+    .toasts,.popups,.banner,.subbanner,.confetti{ display:block !important; }
+    .panel{ border:5px dotted #000; page-break-inside:avoid; transform:rotate(1deg) }
+    a::after{ content:" [" attr(href) "]" }
+  }
+
+  /* ===== Spin keyframes ===== */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spinR { to { rotate: 360deg; } }
+  
+/* === CLICK-AMPLIFIED GLOBAL SHAKE (additive; does not remove anything) === */
+:root{ --shake-ampl: 0; }
+
+/* Run a subtle shake on the entire page; amplifies with --shake-ampl */
+html{ animation: shake 120ms linear infinite; transform-origin:center; }
+
+@keyframes shake{
+  0%   { transform: translate( calc(var(--shake-ampl)*0px),   calc(var(--shake-ampl)*0px) ) rotate( calc(var(--shake-ampl)*0deg) ); }
+  10%  { transform: translate( calc(var(--shake-ampl)*0.6px), calc(var(--shake-ampl)*-0.8px) ) rotate( calc(var(--shake-ampl)*0.05deg) ); }
+  20%  { transform: translate( calc(var(--shake-ampl)*-0.8px),calc(var(--shake-ampl)*0.5px) ) rotate( calc(var(--shake-ampl)*-0.06deg) ); }
+  30%  { transform: translate( calc(var(--shake-ampl)*0.9px), calc(var(--shake-ampl)*0.3px) ) rotate( calc(var(--shake-ampl)*0.07deg) ); }
+  40%  { transform: translate( calc(var(--shake-ampl)*-0.7px),calc(var(--shake-ampl)*-0.9px) ) rotate( calc(var(--shake-ampl)*-0.08deg) ); }
+  50%  { transform: translate( calc(var(--shake-ampl)*0.0px), calc(var(--shake-ampl)*0.0px) ) rotate( calc(var(--shake-ampl)*0deg) ); }
+  60%  { transform: translate( calc(var(--shake-ampl)*0.7px), calc(var(--shake-ampl)*0.9px) ) rotate( calc(var(--shake-ampl)*0.08deg) ); }
+  70%  { transform: translate( calc(var(--shake-ampl)*-0.9px),calc(var(--shake-ampl)*-0.3px) ) rotate( calc(var(--shake-ampl)*-0.07deg) ); }
+  80%  { transform: translate( calc(var(--shake-ampl)*0.8px), calc(var(--shake-ampl)*-0.5px) ) rotate( calc(var(--shake-ampl)*0.06deg) ); }
+  90%  { transform: translate( calc(var(--shake-ampl)*-0.6px),calc(var(--shake-ampl)*0.8px) ) rotate( calc(var(--shake-ampl)*-0.05deg) ); }
+  100% { transform: translate( calc(var(--shake-ampl)*0px),   calc(var(--shake-ampl)*0px) ) rotate( calc(var(--shake-ampl)*0deg) ); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  :root{ --shake-ampl: 0 !important; }
+  html{ animation: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+
+
+!-- Background music -->
+  <audio id="bgmusic" src="sound.mp3" preload="auto" loop></audio>
+
+  <!-- Click sound template (hidden) -->
+  <audio id="clickfx" src="wassawassa.mp3" preload="auto"></audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bg = document.getElementById('bgmusic');
+      const clickTemplate = document.getElementById('clickfx');
+
+      // Ensure audible
+      bg.muted = false;
+      bg.volume = 1.0;
+
+      let started = false;
+
+      const startOnce = async () => {
+        if (started) return;
+        try {
+          await bg.play();
+          started = true;
+          // Remove the one-time starters
+          ['pointerdown','click','touchstart','keydown'].forEach(t =>
+            document.removeEventListener(t, startOnce, { passive: true })
+          );
+        } catch (e) {
+          console.warn('Background playback blocked:', e);
+        }
+      };
+
+      // Start background music on the *first* interaction
+      ['pointerdown','click','touchstart','keydown'].forEach(t =>
+        document.addEventListener(t, startOnce, { passive: true })
+      );
+
+      // Play click sound on *every* click
+      document.addEventListener('click', () => {
+        // Clone so rapid clicks can overlap
+        const fx = clickTemplate.cloneNode(true);
+        // Optional: control click volume independently
+        fx.volume = 0.6;
+        // iOS sometimes needs .currentTime reset
+        fx.currentTime = 0;
+
+        // Fire-and-forget, clean up when finished
+        fx.addEventListener('ended', () => fx.remove());
+        // Some browsers require the element to be in DOM to play reliably
+        document.body.appendChild(fx);
+        fx.play().catch(() => {
+          // If this fails before first gesture, it will succeed after background starts
+        });
+      }, { passive: true });
+    });
+  </script>
+
+<!-- === 500ms COLOUR FLASH (non-destructive addition) === -->
+<style>
+/* Full-page overlay that changes colour every 500ms.
+   Uses mix-blend-mode:difference so underlying content remains intact. */
+.flash-500ms{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:#ffffff; filter:hue-rotate(0deg) saturate(200%); opacity:1;
+  mix-blend-mode:difference;
+  animation: hueRotate500 60s steps(120, end) infinite; /* 60s / 120 = 0.5s per colour */}
+@keyframes hueRotate500{to{filter:hue-rotate(360deg) saturate(200%);}}
+@media (prefers-reduced-motion: reduce){ .flash-500ms{animation:none; opacity:0;} }
+</style>
+
+<!-- === 30 COLOUR FLASH (500ms obvious colours) === -->
+<style>
+.flash-500ms{animation: flash30 15s steps(30,end) infinite !important;}
+@keyframes flash30{
+  0% { background:#FF0000; }
+  3% { background:#00FF00; }
+  6% { background:#0000FF; }
+  10% { background:#FFFF00; }
+  13% { background:#FF00FF; }
+  16% { background:#00FFFF; }
+  20% { background:#FFA500; }
+  23% { background:#800080; }
+  26% { background:#008000; }
+  30% { background:#800000; }
+  33% { background:#00FF80; }
+  36% { background:#FF0080; }
+  40% { background:#808000; }
+  43% { background:#008080; }
+  46% { background:#000080; }
+  50% { background:#FFC0CB; }
+  53% { background:#FFD700; }
+  56% { background:#40E0D0; }
+  60% { background:#FF4500; }
+  63% { background:#7FFF00; }
+  66% { background:#DC143C; }
+  70% { background:#00CED1; }
+  73% { background:#FF1493; }
+  76% { background:#ADFF2F; }
+  80% { background:#1E90FF; }
+  83% { background:#FA8072; }
+  86% { background:#B22222; }
+  90% { background:#DA70D6; }
+  93% { background:#20B2AA; }
+  96% { background:#A0522D; }
+  100% { background:#A0522D; }
+}
+</style>
+</head>
+<body>
+<div class="flash-500ms" aria-hidden="true"></div>
+
+
+
+
+!-- Background music -->
+  <audio id="bgmusic" src="sound.mp3" preload="auto" loop></audio>
+
+  <!-- Click sound template (hidden) -->
+  <audio id="clickfx" src="wassawassa.mp3" preload="auto"></audio>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bg = document.getElementById('bgmusic');
+      const clickTemplate = document.getElementById('clickfx');
+
+      // Ensure audible
+      bg.muted = false;
+      bg.volume = 1.0;
+
+      let started = false;
+
+      const startOnce = async () => {
+        if (started) return;
+        try {
+          await bg.play();
+          started = true;
+          // Remove the one-time starters
+          ['pointerdown','click','touchstart','keydown'].forEach(t =>
+            document.removeEventListener(t, startOnce, { passive: true })
+          );
+        } catch (e) {
+          console.warn('Background playback blocked:', e);
+        }
+      };
+
+      // Start background music on the *first* interaction
+      ['pointerdown','click','touchstart','keydown'].forEach(t =>
+        document.addEventListener(t, startOnce, { passive: true })
+      );
+
+      // Play click sound on *every* click
+      document.addEventListener('click', () => {
+        // Clone so rapid clicks can overlap
+        const fx = clickTemplate.cloneNode(true);
+        // Optional: control click volume independently
+        fx.volume = 0.6;
+        // iOS sometimes needs .currentTime reset
+        fx.currentTime = 0;
+
+        // Fire-and-forget, clean up when finished
+        fx.addEventListener('ended', () => fx.remove());
+        // Some browsers require the element to be in DOM to play reliably
+        document.body.appendChild(fx);
+        fx.play().catch(() => {
+          // If this fails before first gesture, it will succeed after background starts
+        });
+      }, { passive: true });
+    });
+  </script>
+
+<style>
+/* === LOGO RAIN === */
+.logo-rain {
+    position: fixed;
+    top: -80px;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 999999; /* above everything */
+    opacity: 0.9;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.4;
+    }
+}
+</style>
+
+
+
+
+
+  <!-- Anchor toggles (must precede .site) -->
+  <div id="storm" aria-hidden="true"></div>
+  <div id="calm" aria-hidden="true"></div>
+  <div id="whiteout" aria-hidden="true"></div>
+
+  <!-- Hidden anchors for hero infinite swap (must precede .site for ~ selectors) -->
+  <div id="swapA" aria-hidden="true"></div>
+  <div id="swapB" aria-hidden="true"></div>
+
+  <!-- UI Controls -->
+  <nav class="controls" aria-label="Lägen">
+    <a href="#storm" title="Starta alla animationer">KAOS</a>
+    <a href="#calm" title="Pausa det mesta">LUGN</a>
+    <a href="#whiteout" title="Vit/invertera">VIT</a>
+    <a href="#" title="Återställ">ÅTER</a>
+  </nav>
+
+  <!-- Progress bar -->
+  <div class="progress" aria-hidden="true"></div>
+
+  <div class="site">
+    <!-- BANNERS -->
+    <div class="banner banner--flash" aria-hidden="true">
+      <marquee behavior="alternate" scrollamount="40">VÄLKOMMEN (KANSKE)</marquee>
+    </div>
+    <div class="subbanner" aria-hidden="true">
+      <marquee direction="right" scrollamount="18">Vi använder kakor, bakverk, och ibland logik. &nbsp; &bull; &nbsp; Ingen support erbjuds. &nbsp; &bull; &nbsp; Sidan uppdateras inte.</marquee>
+    </div>
+
+    <!-- TOASTS -->
+    <aside class="toasts" aria-live="polite" aria-atomic="true">
+      <div class="toast ok">✔︎ Inställningar sparades (kanske)</div>
+      <div class="toast warn">⚠︎ Versionskonflikt upptäckt</div>
+      <div class="toast err">✖︎ Ett oväntat fel inträffade</div>
+      <div class="toast ok">✔︎ Du är nu inloggad som gäst</div>
+      <div class="toast warn">⚠︎ Varning: för många varningar</div>
+    </aside>
+
+    <header class="site-header">
+      <div class="logo" data-tip="Skala 130%, sned">
+        <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg" aria-label="logo">
+          <rect x="0" y="0" width="140" height="140" fill="#ff00ff"/>
+          <text x="10" y="80" font-size="42" font-family="monospace" fill="#000">DaTe</text>
+        </svg>
+      </div>
+
+      <nav class="nav nav--gaslight" aria-label="Primär">
+        <ul>
+          <li><a href="#news" data-tip="Nyheter (eller?)">Nyheter</a></li>
+          <li><a href="#events" data-tip="Evenemang (försök)">Evenemang</a></li>
+          <li><a href="#board" data-tip="Styrelsen (oklart)">Styrelsen</a></li>
+          <li><a href="#gulis" data-tip="Gulis (mycket text)">Gulis</a></li>
+          <li><a href="#membership" data-tip="Bli medlem (mod?)">Bli medlem</a></li>
+          <li><a href="#partners" data-tip="Samarbeten (självklart)">Samarbeten</a></li>
+          <li><a href="#contact" data-tip="Kontakt (om du kan)">Kontakt</a></li>
+          <li><a href="#news">Nyheter*</a></li>
+          <li><a href="#events">Evenemang*</a></li>
+          <li><a href="#board">Styrelsen*</a></li>
+          <li><a href="#gulis">Gulis*</a></li>
+          <li><a href="#membership">Bli medlem**</a></li>
+        </ul>
+      </nav>
+
+      <form class="search" action="#home" method="get" onsubmit="return false">
+        <input class="search__input" type="search" placeholder="Sök (försök)" aria-label="Sök" />
+        <button class="search__btn" type="submit">Sök</button>
+      </form>
+    </header>
+
+    <!-- SIDE RAILS -->
+    <div class="rail left" aria-hidden="true">Överväldigande&nbsp;läge&nbsp;PAÅ</div>
+    <div class="rail right" aria-hidden="true">Läs&nbsp;allt&nbsp;genast</div>
+
+    <!-- EPHEMERAL POPUPS OVERLAY -->
+    <div class="popups" aria-hidden="true">
+      <div class="popup"><div class="title">Systemmeddelande</div><div class="text">Ändringar har inte sparats.</div></div>
+      <div class="popup"><div class="title">Tips</div><div class="text">Klicka varsomhelst (inte här).</div></div>
+      <div class="popup"><div class="title">Notis</div><div class="text">Du tittar på fel ruta.</div></div>
+      <div class="popup"><div class="title">Varning</div><div class="text">Detta innehåll är tillgängligt igår.</div></div>
+      <div class="popup"><div class="title">Information</div><div class="text">Det finns inget att se.</div></div>
+      <div class="popup"><div class="title">System</div><div class="text">Autentisering klar (oklart).</div></div>
+      <div class="popup"><div class="title">Tips</div><div class="text">Tryck ESC för att acceptera allt.</div></div>
+      <div class="popup"><div class="title">Notis</div><div class="text">Fönster stängs omedelbart.</div></div>
+    </div>
+
+    <main id="home" class="content">
+      <section class="hero">
+        <h1 class="glitch" data-text="Datateknologerna — Nu med 600% mer motstånd">Datateknologerna — Nu med 600% mer motstånd</h1>
+        <p>Om du kan navigera denna sida, är du antingen värdig… eller vilse. <span data-tip="Det blir värre längre ner">(tips)</span></p>
+
+        <!-- Mid buttons (swap forever) -->
+        <div class="btn-row set-a">
+          <a class="btn btn-join" href="#swapA" data-tip="Byter plats">Bli medlem (?)</a>
+          <a class="btn btn-more btn--ghost" href="#swapA" data-tip="Byter plats">Läs mer (inte)</a>
+        </div>
+        <div class="btn-row set-b">
+          <a class="btn btn-join" href="#swapB" data-tip="Byter plats">Bli medlem (?)</a>
+          <a class="btn btn-more btn--ghost" href="#swapB" data-tip="Byter plats">Läs mer (inte)</a>
+        </div>
+      </section>
+
+      <!-- Ticker stack -->
+      <div class="ticker">
+        <marquee behavior="scroll" scrollamount="14">Breaking: Allt är normalt. &nbsp;•&nbsp; Vänligen ignorera rubrikerna. &nbsp;•&nbsp; Upprepa: Allt är normalt.</marquee>
+        <marquee class="line2" direction="right" scrollamount="13">OBS: Dessa meddelanden är viktiga, kanske.</marquee>
+        <marquee class="line3" behavior="alternate" scrollamount="12">Klicka inte här. Klicka inte där. Klicka inte alls.</marquee>
+      </div>
+
+      <!-- News panel -->
+      <section id="news" class="panel">
+        <h2>Nyheter</h2>
+        <div class="news-columns">
+          <div class="news-item">1739923200123 — Höstmöte: Läs mer? Nej.</div>
+          <div class="news-item">1739921200000 — Föreningsmöte: Inte här.</div>
+          <div class="news-item">1739913200000 — MM03: Sidan finns, men inte för dig.</div>
+          <div class="news-item">1739810000000 — Datatillställning: Kanske.</div>
+          <div class="news-item">1739700000000 — Någonting hänt: Oklart.</div>
+          <div class="news-item">1739600000000 — Kallelse: Ja/Nej.</div>
+        </div>
+      </section>
+
+      <!-- Events panel -->
+      <section id="events" class="panel">
+        <h2>Evenemang</h2>
+        <div class="grid">
+          <div class="card" data-tip="Förflyttad">ÅFV - Måndag - Vett & Etikett</div>
+          <div class="card" data-tip="Ej öppningsbar"><a href="#m1" style="color:#bbb;text-decoration:none">ÅFV - Tisdag - KBG (info)</a></div>
+          <div class="card" data-tip="Flyttad">ÅFV - Onsdag - Gamingturnering</div>
+          <div class="card" data-tip="Inställd?">Årsfest hackathon XXVII</div>
+        </div>
+      </section>
+
+      <!-- Modal cascade (no JS) -->
+      <div id="m1" class="modal" role="dialog" aria-modal="true">
+        <h3>Detaljer: KBG</h3>
+        <p>Detta fönster leder vidare.</p>
+        <div class="row"><a href="#m2">Nästa</a> <a href="#events">Stäng</a></div>
+      </div>
+      <div id="m2" class="modal" role="dialog" aria-modal="true">
+        <h3>Detaljer 2</h3>
+        <p>Inte här heller.</p>
+        <div class="row"><a href="#m3">Nästa</a> <a href="#events">Stäng</a></div>
+      </div>
+      <div id="m3" class="modal" role="dialog" aria-modal="true">
+        <h3>Detaljer 3</h3>
+        <p>Slutet? Nej. <a href="#m1">Börja om</a></p>
+        <div class="row"><a href="#events">Stäng</a></div>
+      </div>
+
+      <!-- Membership panel -->
+      <section id="membership" class="panel">
+        <h2>Bli medlem</h2>
+        <div class="form-wrap">
+          <label>Fullständigt namn* <input type="text" placeholder="Förnamn Efternamn"></label>
+          <label>E‑post* <input type="email" placeholder="namn@exempel.ex"></label>
+          <label>Lösenord* <input type="password" placeholder="••••••••"></label>
+          <label>Bekräfta lösenord* <input type="password" placeholder="••••••••"></label>
+          <div class="submit-wrap"><button class="btn btn--submit" type="button" data-tip="hey hey heyyyy">Skicka</button></div>
+        </div>
+      </section>
+
+      <!-- Partners panel -->
+      <section id="partners" class="panel">
+        <h2>Samarbetspartners</h2>
+        <div class="logos">
+          <div class="logo" data-tip="Klicka inte"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+          <div class="logo"></div>
+        </div>
+      </section>
+
+      <!-- Contact panel -->
+      <section id="contact" class="panel">
+        <h2>Kontakt</h2>
+        <p>Om du lyckas kontakta oss är du anställd. <span data-tip="Tips: du gör det inte">(hint)</span></p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>© 2026 DaTe (parodi). All irritation förbehålles.</p></footer>
+
+    <div class="confetti" aria-hidden="true"></div>
+  </div>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  function getAmpl(){
+    var v = getComputedStyle(root).getPropertyValue('--shake-ampl');
+    var n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  }
+  function setAmpl(x){ root.style.setProperty('--shake-ampl', x.toFixed(2)); }
+
+  // Respect reduced motion: disable shake amplification
+  var prm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+  function reduced(){ return prm && prm.matches; }
+  if (prm && prm.addEventListener) prm.addEventListener('change', function(){ if(reduced()) setAmpl(0); });
+
+  // Every click anywhere: increase amplitude slightly (capped)
+  document.addEventListener('click', function(){
+    if(reduced()) return;
+    var a = getAmpl();
+    a = Math.min(a + 0.6, 20); // cap to avoid extremes
+    setAmpl(a);
+  }, true);
+})();
+</script>
+
+</body>
+</html>
