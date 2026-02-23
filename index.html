@@ -767,25 +767,27 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
   let timerId = null;
 
   function playFlashbang(){
-    if (!running) return;
+  if (!running) return;
 
-    grenade.classList.remove('active');
+  grenade.classList.remove('active');
+  whiteout.classList.remove('active');
+  void grenade.offsetWidth;
+
+  grenade.classList.add('active');
+
+  setTimeout(() => {
+    // 🔥 flash moment
+    grenade.classList.remove('active');   // hide grenade instantly
+    whiteout.classList.add('active');
+
+    sfx.currentTime = 0;
+    sfx.play().catch(() => {});
+  }, 300);
+
+  setTimeout(() => {
     whiteout.classList.remove('active');
-    void grenade.offsetWidth;
-
-    grenade.classList.add('active');
-
-    setTimeout(() => {
-      whiteout.classList.add('active');
-      sfx.currentTime = 0;
-      sfx.play().catch(() => {});
-    }, 300);
-
-    setTimeout(() => {
-      grenade.classList.remove('active');
-      whiteout.classList.remove('active');
-    }, 2100);
-  }
+  }, 2100);
+}
 
   function scheduleNext(){
     if (!running || timerId) return;
