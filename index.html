@@ -726,5 +726,88 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 })();
 </script>
 
+<!-- Flashbang effect (additive) -->
+<style>
+.flashbang-wrap{position:fixed;inset:0;pointer-events:none;z-index:1000000;overflow:hidden}
+.flashbang-grenade{position:absolute;left:50%;top:120vh;transform:translateX(-50%);width:clamp(120px,16vmin,210px);opacity:0;will-change:top,opacity}
+.flashbang-grenade.active{animation:flashbangLaunch 300ms cubic-bezier(.2,.9,.35,1) forwards}
+@keyframes flashbangLaunch{
+  0%{top:120vh;opacity:0}
+  20%{opacity:1}
+  100%{top:32vh;opacity:1}
+}
+.flashbang-whiteout{position:absolute;inset:0;background:#fff;opacity:0}
+.flashbang-whiteout.active{animation:flashbangWhite 1800ms ease-out forwards}
+@keyframes flashbangWhite{
+  0%{opacity:0}
+  8%{opacity:0}
+  12%{opacity:1}
+  60%{opacity:1}
+  100%{opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .flashbang-grenade.active,.flashbang-whiteout.active{animation:none !important;opacity:0 !important}
+}
+</style>
+
+<div class="flashbang-wrap" aria-hidden="true">
+  <img id="flashbangGrenade" class="flashbang-grenade" src="flashbang.png" alt="">
+  <div id="flashbangWhiteout" class="flashbang-whiteout"></div>
+</div>
+<audio id="flashbangSfx" src="flashbang.mp3" preload="auto"></audio>
+
+<script>
+(function(){
+  const grenade = document.getElementById('flashbangGrenade');
+  const whiteout = document.getElementById('flashbangWhiteout');
+  const sfx = document.getElementById('flashbangSfx');
+  if(!grenade || !whiteout || !sfx) return;
+
+  let running = true;
+  let timerId = null;
+
+  function playFlashbang(){
+    if (!running) return;
+
+    grenade.classList.remove('active');
+    whiteout.classList.remove('active');
+    void grenade.offsetWidth;
+
+    grenade.classList.add('active');
+
+    setTimeout(() => {
+      whiteout.classList.add('active');
+      sfx.currentTime = 0;
+      sfx.play().catch(() => {});
+    }, 300);
+
+    setTimeout(() => {
+      grenade.classList.remove('active');
+      whiteout.classList.remove('active');
+    }, 2100);
+  }
+
+  function scheduleNext(){
+    if (!running || timerId) return;
+    const delay = Math.random() * 6000;
+    timerId = setTimeout(() => {
+      timerId = null;
+      playFlashbang();
+      scheduleNext();
+    }, delay);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    running = !document.hidden;
+    if (!running && timerId){
+      clearTimeout(timerId);
+      timerId = null;
+    }
+    if (running) scheduleNext();
+  });
+
+  scheduleNext();
+})();
+</script>
 </body>
 </html>
