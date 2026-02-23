@@ -865,36 +865,6 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
   <p>Go all the way down, then scroll back up.</p>
 </div>
 
-<script>
-  let reachedBottom = false;
-  let shown = false;
-
-window.addEventListener("scroll", function () {
-    const scrollTop = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const docHeight = document.body.scrollHeight;
-    const maxScroll = docHeight - windowHeight;
-
-    // Detect bottom
-    if (scrollTop >= maxScroll - 5) {
-      reachedBottom = true;
-    }
-
-    // Calculate scroll percentage (0 = top, 1 = bottom)
-    const scrollPercent = scrollTop / maxScroll;
-
-    // Trigger at 50% upward (halfway up the page)
-    if (reachedBottom && !shown && scrollPercent <= 0.2) {
-      const surprise = document.getElementById("surprise");
-      surprise.style.display = "block";
-      shown = true;
-
-      setTimeout(() => {
-        surprise.style.display = "none";
-      }, 1000);
-    }
-  });
-</script>
 
 <script>
   let reachedBottom = false;
