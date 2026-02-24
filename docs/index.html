@@ -315,45 +315,10 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 </style>
 </head>
 <body>
-<!-- ENTER GATE -->
-<div id="enterGate">
-  <div class="gateBox">PRESS ENTER</div>
-</div>
 
-<style>
-/* hide page content behind gate */
-body.locked {
-  overflow: hidden;
-}
 
-/* fullscreen overlay */
-#enterGate{
-  position: fixed;
-  inset: 0;
-  background: #000;
-  color: #fff;
-  z-index: 9999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family: monospace;
-  font-size: 28px;
-  letter-spacing: 4px;
-}
-
-/* blinking text */
-.gateBox{
-  animation: blink 1s infinite;
-}
-
-@keyframes blink{
-  50%{opacity:0.35}
-}
-</style>
-
-<script>
-/* lock scroll immediately */
-document.documentElement.classList.add("locked");
+    <script>
+document.body.classList.add("locked");
 
 let started = false;
 
@@ -361,22 +326,25 @@ function startPage() {
   if (started) return;
   started = true;
 
-  // remove overlay
-  document.getElementById("enterGate").remove();
+  const gate = document.getElementById("enterGate");
+  if (gate) gate.remove();
 
-  // unlock page
-  document.documentElement.classList.remove("locked");
+  document.body.classList.remove("locked");
 
-  // notify other scripts to start
+  // notify other scripts
   document.dispatchEvent(new Event("pageStart"));
 }
 
-/* start when ENTER pressed */
+// ENTER key
 document.addEventListener("keydown", e => {
   if (e.key === "Enter") startPage();
 });
-</script>
 
+// click anywhere on gate
+document.addEventListener("click", e => {
+  if (e.target.closest("#enterGate")) startPage();
+});
+</script>
 
 !-- Background music -->
   <audio id="bgmusic" src="sound.mp3" preload="auto" loop></audio>
