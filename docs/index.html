@@ -23,8 +23,9 @@
 
         document.body.appendChild(img);
 
-        // cleanup when done
-        setTimeout(() => img.remove(), duration * 1000);
+        document.addEventListener("pageStart", () => {
+  setInterval(spawnLogo, 250);
+});
     }
 
     // spawn repeatedly
@@ -314,6 +315,72 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 </style>
 </head>
 <body>
+
+    <!-- START LOCK SCREEN -->
+<div id="enterGate">
+  <div class="gateBox">PRESS ENTER</div>
+</div>
+
+<style>
+/* lock page until ENTER */
+body.locked * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+body.locked {
+  overflow: hidden;
+  cursor: wait;
+}
+
+/* full screen gate */
+#enterGate{
+  position:fixed;
+  inset:0;
+  background:#000;
+  color:#fff;
+  z-index:9999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:monospace;
+  font-size:28px;
+  letter-spacing:4px;
+}
+
+/* blinking text */
+.gateBox{
+  animation: blink 1s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0.35}
+}
+</style>
+
+<script>
+/* lock immediately */
+document.documentElement.classList.add("locked");
+
+let started = false;
+
+function startPage() {
+  if (started) return;
+  started = true;
+
+  document.documentElement.classList.remove("locked");
+  document.getElementById("enterGate").remove();
+
+  // tell other scripts to start
+  document.dispatchEvent(new Event("pageStart"));
+}
+
+/* start only when ENTER is pressed */
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter") startPage();
+});
+</script>
+<!-- END LOCK SCREEN -->
 
 
 !-- Background music -->
@@ -757,7 +824,9 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 <audio id="flashbangSfx" src="flashbang.mp3" preload="auto"></audio>
 
 <script>
-(function(){
+    document.addEventListener("pageStart", () => {
+  // start effect
+        (function(){
   const grenade = document.getElementById('flashbangGrenade');
   const whiteout = document.getElementById('flashbangWhiteout');
   const sfx = document.getElementById('flashbangSfx');
@@ -810,6 +879,8 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 
   scheduleNext();
 })();
+});
+
 </script>
 
     <style>
