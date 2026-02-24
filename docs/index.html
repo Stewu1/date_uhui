@@ -18,6 +18,7 @@
     img.style.animationDuration = duration + 's';
     img.style.transform = `rotate(${Math.random()*360}deg)`;
     document.body.appendChild(img);
+    img.addEventListener("animationend", () => img.remove());
   }
   document.addEventListener('pageStart', () => {
     setInterval(spawnLogo, 250);
