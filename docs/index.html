@@ -317,14 +317,24 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 <!-- Start Screen Gate -->
 <div id="enterGate">
   <div class="gate-content">
-    <h1>Välkommen</h1>
-    <button id="enterButton" type="button">Starta</button>
+    <button id="enterButton" type="button">Click me.</button>
   </div>
 </div>
 <style>
 #enterGate{position:fixed;inset:0;background:#000;color:#fff;z-index:10000000;display:flex;align-items:center;justify-content:center;flex-direction:column}
 #enterGate .gate-content{text-align:center}
-#enterGate button{font-size:22px;padding:14px 28px;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer}
+#enterGate button {
+  position: fixed;       /* fix it relative to the viewport */
+  top: 500px;            /* y-position */
+  left: 800px;           /* x-position */
+  font-size: 22px;
+  padding: 14px 28px;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10000001;     /* above most content */
+}
 #enterGate button:hover{background:#fff;color:#000}
 </style>
 <script>
