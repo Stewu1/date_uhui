@@ -315,37 +315,30 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 </style>
 </head>
 <body>
-
-    <!-- START LOCK SCREEN -->
+<!-- ENTER GATE -->
 <div id="enterGate">
   <div class="gateBox">PRESS ENTER</div>
 </div>
 
 <style>
-/* lock page until ENTER */
-body.locked * {
-  animation-play-state: paused !important;
-  transition: none !important;
-}
-
+/* hide page content behind gate */
 body.locked {
   overflow: hidden;
-  cursor: wait;
 }
 
-/* full screen gate */
+/* fullscreen overlay */
 #enterGate{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#fff;
-  z-index:9999999;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  z-index: 9999999;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-family:monospace;
-  font-size:28px;
-  letter-spacing:4px;
+  font-family: monospace;
+  font-size: 28px;
+  letter-spacing: 4px;
 }
 
 /* blinking text */
@@ -359,7 +352,7 @@ body.locked {
 </style>
 
 <script>
-/* lock immediately */
+/* lock scroll immediately */
 document.documentElement.classList.add("locked");
 
 let started = false;
@@ -368,19 +361,21 @@ function startPage() {
   if (started) return;
   started = true;
 
-  document.documentElement.classList.remove("locked");
+  // remove overlay
   document.getElementById("enterGate").remove();
 
-  // tell other scripts to start
+  // unlock page
+  document.documentElement.classList.remove("locked");
+
+  // notify other scripts to start
   document.dispatchEvent(new Event("pageStart"));
 }
 
-/* start only when ENTER is pressed */
+/* start when ENTER pressed */
 document.addEventListener("keydown", e => {
   if (e.key === "Enter") startPage();
 });
 </script>
-<!-- END LOCK SCREEN -->
 
 
 !-- Background music -->
