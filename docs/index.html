@@ -22,10 +22,8 @@
         img.style.transform = `rotate(${Math.random()*360}deg)`;
 
         document.body.appendChild(img);
+        setInterval(spawnLogo, 250);
 
-        document.addEventListener("pageStart", () => {
-  setInterval(spawnLogo, 250);
-});
     }
 
 })();
