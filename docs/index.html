@@ -1,35 +1,38 @@
 <!doctype html>
-<html lang="sv">
+<html lang="sv" class="locked">
 
     
 <script>
 (function() {
-    const logoURL = "date.png";  // <-- CHANGE THIS to your actual logo
-
-    function spawnLogo() {
-        const img = document.createElement("img");
-        img.src = logoURL;
-        img.className = "logo-rain";
-
-        const startX = Math.random() * window.innerWidth;
-        const size = 40 + Math.random() * 60; // varied sizes
-        const duration = 3 + Math.random() * 5; // fall speed
-
-        img.style.left = startX + "px";
-        img.style.width = size + "px";
-        img.style.height = size + "px";
-        img.style.animationDuration = duration + "s";
-        img.style.transform = `rotate(${Math.random()*360}deg)`;
-
-        document.body.appendChild(img);
-        setInterval(spawnLogo, 250);
-
-    }
-
+  const logoURL = "date.png";
+  function spawnLogo() {
+    const img = document.createElement('img');
+    img.src = logoURL;
+    img.className = 'logo-rain';
+    const startX = Math.random() * window.innerWidth;
+    const size = 40 + Math.random() * 60;
+    const duration = 3 + Math.random() * 5;
+    img.style.left = startX + 'px';
+    img.style.width = size + 'px';
+    img.style.height = size + 'px';
+    img.style.animationDuration = duration + 's';
+    img.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(img);
+  }
+  document.addEventListener('pageStart', () => {
+    setInterval(spawnLogo, 250);
+  });
 })();
 </script>
 
 <head>
+<style>
+/* Freeze animations until start */
+html.locked { animation-play-state: paused !important; }
+html.locked::before, html.locked::after { animation-play-state: paused !important; }
+html.locked *, body.locked * { animation-play-state: paused !important; }
+</style>
+
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.9, user-scalable=no" />
   <title>DaTe 2.0 — The User‑Repellent Experience™ (Parodi, 67‑Color Flash)</title>
@@ -311,9 +314,31 @@ html{ animation: shake 120ms linear infinite; transform-origin:center; }
 </style>
 </head>
 <body>
+<!-- Start Screen Gate -->
+<div id="enterGate">
+  <div class="gate-content">
+    <h1>Välkommen</h1>
+    <button id="enterButton" type="button">Starta</button>
+  </div>
+</div>
+<style>
+#enterGate{position:fixed;inset:0;background:#000;color:#fff;z-index:10000000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#enterGate .gate-content{text-align:center}
+#enterGate button{font-size:22px;padding:14px 28px;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer}
+#enterGate button:hover{background:#fff;color:#000}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('enterButton');
+  if(btn){ btn.addEventListener('click', startPage); }
+});
+</script>
+
 
 
     <script>
+document.documentElement.classList.add("locked");
+let __gateAdded = true;
 document.body.classList.add("locked");
 
 let started = false;
@@ -325,7 +350,8 @@ function startPage() {
   const gate = document.getElementById("enterGate");
   if (gate) gate.remove();
 
-  document.body.classList.remove("locked");
+  document.documentElement.classList.remove("locked");
+ document.body.classList.remove("locked");
 
   // notify other scripts
   document.dispatchEvent(new Event("pageStart"));
